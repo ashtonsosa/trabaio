@@ -33,53 +33,58 @@
   </main>
 
   <script>
-   async function sha256Hex(text){
+async function sha256Hex(text){
   const enc = new TextEncoder();
   const data = enc.encode(text);
   const hash = await crypto.subtle.digest('SHA-256', data);
   return Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2,'0')).join('');
 }
 
-    let storedHash = '3252aba4e9e910be07c4e277ad0e511ba5cc5dc8b7612471b40a575500249771';
-    let secretText = 'Países, procure por países ';
+const storedData = {
+  '3252aba4e9e910be07c4e277ad0e511ba5cc5dc8b7612471b40a575500249771': 'Procure por países, ISLÂNDIA SUÉCIA OMÃ 3166-1',
+  '1bb1a9347c30fd600f97d42d248296c0dc9da110810710d734e2b4a0e5f1f0f4': 'Resposta secreta para o código 3',
+  '9b31d4edf386cb24248c71da624c02f71e3565d3a3c4e565f921fb851d5b58bc': 'a forma de seis lados esconde muito',
+  '48b0fe7ec739e0818f8c2a4e18158265b1570c1052c84da26f9aec8742e3046b': 'já tentou as iniciais? o google é seu amigo'
+};
 
-    const elPw = document.getElementById('pw');
-    const elCheck = document.getElementById('checkBtn');
-    const elResult = document.getElementById('result');
+const elPw = document.getElementById('pw');
+const elCheck = document.getElementById('checkBtn');
+const elResult = document.getElementById('result');
 
-    async function verify(){
-      const val = elPw.value;
-      if(!val){
-        showMessage('Insira uma senha.');
-        return;
-      }
-      const h = await sha256Hex(val);
-      if(h === storedHash){
-        showSecret();
-      } else {
-        showMessage('Senha incorreta.');
-      }
-    }
+async function verify(){
+  const val = elPw.value;
+  if(!val){
+    showMessage('Insira uma senha.');
+    return;
+  }
+  const h = await sha256Hex(val);
+  if(storedData.hasOwnProperty(h)){
+    showSecret(storedData[h]);
+  } else {
+    showMessage('Senha incorreta.');
+  }
+}
 
-    function showSecret(){
-      elResult.style.display = 'block';
-      elResult.textContent = secretText;
-      elResult.style.borderColor = '#c7f3c7';
-      elResult.style.background = '#f0fff4';
-    }
+function showSecret(text){
+  elResult.style.display = 'block';
+  elResult.textContent = text;
+  elResult.style.borderColor = '#c7f3c7';
+  elResult.style.background = '#f0fff4';
+}
 
-    function showMessage(msg){
-      elResult.style.display = 'block';
-      elResult.textContent = msg;
-      elResult.style.borderColor = '#ffd7d7';
-      elResult.style.background = '#fff5f5';
-    }
+function showMessage(msg){
+  elResult.style.display = 'block';
+  elResult.textContent = msg;
+  elResult.style.borderColor = '#ffd7d7';
+  elResult.style.background = '#fff5f5';
+}
 
-    elCheck.addEventListener('click', verify);
-    elPw.addEventListener('keydown', e => { if(e.key === 'Enter') verify(); });
+elCheck.addEventListener('click', verify);
+elPw.addEventListener('keydown', e => { if(e.key === 'Enter') verify(); });
   </script>
 </body>
 </html>
+
 
 
 
