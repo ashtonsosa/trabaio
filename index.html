@@ -33,13 +33,12 @@
   </main>
 
   <script>
-    async function sha256Hex(text){
-      const enc = new TextEncoder();
-      const data = enc.encode(text);
-      const hash = await crypto.subtle.digest('SHA-256', data);
-      return Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2,'0')).join('');
-    }
-
+   async function sha256Hex(text){
+  const enc = new TextEncoder();
+  const data = enc.encode(text);
+  const hash = await crypto.subtle.digest('SHA-256', data);
+  return Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2,'0')).join('');
+}
 
     let storedHash = '3252aba4e9e910be07c4e277ad0e511ba5cc5dc8b7612471b40a575500249771';
     let secretText = 'Países, procure por países ';
@@ -81,6 +80,7 @@
   </script>
 </body>
 </html>
+
 
 
 
