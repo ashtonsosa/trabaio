@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Site com senha — Revele a resposta</title>
+  <style>
+    :root{font-family:Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;}
+    body{display:flex;align-items:center;justify-content:center;min-height:100vh;background:#f3f4f6;margin:0}
+    .card{width:min(780px,95%);background:#fff;padding:24px;border-radius:12px;box-shadow:0 6px 30px rgba(10,10,10,0.08)}
+    h1{margin:0 0 8px;font-size:20px}
+    p{margin:0 0 16px;color:#444}
+    .row{display:flex;gap:8px;align-items:center}
+    input[type=password]{flex:1;padding:10px 12px;border-radius:8px;border:1px solid #ddd;font-size:15px}
+    button{padding:10px 14px;border-radius:8px;border:0;background:#111;color:#fff;cursor:pointer}
+    .secret{margin-top:16px;padding:14px;border-radius:8px;background:#eef2ff;border:1px solid #dbe7ff}
+  </style>
+</head>
+<body>
+  <main class="card">
+    <h1>Site protegido por senha</h1>
+    <p>Digite a senha correta para ver a resposta secreta.</p>
+
+    <div style="margin-bottom:8px">
+      <label for="pw">Senha</label>
+      <div class="row">
+        <input id="pw" type="password" placeholder="Digite a senha aqui" />
+        <button id="checkBtn">Verificar</button>
+      </div>
+    </div>
+
+    <div id="result" class="secret" style="display:none"></div>
+  </main>
+
+  <script>
+    async function sha256Hex(text){
+      const enc = new TextEncoder();
+      const data = enc.encode(text);
+      const hash = await crypto.subtle.digest('SHA-256', data);
+      return Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2,'0')).join('');
+    }
+
+    const storedData = {
+      '9b31d4edf386cb24248c71da624c02f71e3565d3a3c4e565f921fb851d5b58bc': 'a forma de seis lados esconde muito'
+    };
+
+    const elPw = document.getElementById('pw');
+    const elCheck = document.getElementById('checkBtn');
+    const elResult = document.getElementById('result');
+
+    async function verify(){
+      const val = elPw.value;
+      if(!val){
+        showMessage('Insira uma senha.');
+        return;
+      }
+      const h = await sha256Hex(val);
+      if(storedData.hasOwnProperty(h)){
+        showSecret(storedData[h]);
+      } else {
+        showMessage('Senha incorreta.');
+      }
+    }
+
+    function showSecret(text){
+      elResult.style.display = 'block';
+      elResult.textContent = text;
+      elResult.style.borderColor = '#c7f3c7';
+      elResult.style.background = '#f0fff4';
+    }
+
+    function showMessage(msg){
+      elResult.style.display = 'block';
+      elResult.textContent = msg;
+      elResult.style.borderColor = '#ffd7d7';
+      elResult.style.background = '#fff5f5';
+    }
+
+    elCheck.addEventListener('click', verify);
+    elPw.addEventListener('keydown', e => { if(e.key === 'Enter') verify(); });
+  </script>
+</body>
+</html>
